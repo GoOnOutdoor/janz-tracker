@@ -1,36 +1,33 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Janz Força Tracker
 
-## Getting Started
+Registro mobile-first das 8 semanas de barras, L-Sit e dips do Rodrigo Janz. Stack: Next.js 16 (App Router), Tailwind 4, Google Sheets via Apps Script como backend.
 
-First, run the development server:
+## Setup rápido
+1) Instalar deps  
+`npm install`
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+2) Variáveis de ambiente  
+Copie `.env.example` para `.env.local` e preencha:  
+`NEXT_PUBLIC_SHEETS_URL=https://script.google.com/macros/s/SEU_ID_AQUI/exec`
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+3) Rodar em dev  
+`npm run dev` → http://localhost:3000
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Backend (Google Sheets)
+- Sheet: aba `Dados` com colunas `Data | Semana | Exercicio | Valor | Notas`.
+- Apps Script Web App com `doGet`/`doPost` públicos (quem tem o link edita).
+- Use a URL de implantação no `NEXT_PUBLIC_SHEETS_URL`.
+- Código do Apps Script: use `apps-script/sheets.gs`. Ele trata `mode: "overwrite"` ou
+  `overwrite: true` para sobrescrever a linha da mesma semana/exercício em vez de criar
+  outra. Depois de colar o código, publique/implante novamente o Web App.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Scripts úteis
+- `npm run dev` — desenvolvimento
+- `npm run lint` — checagem de lint
+- `npm run build` — build de produção
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Estrutura
+- `src/app` — App Router + estilos globais
+- `src/components` — UI (Header, WeekSelector, ExerciseCard, ProgressChart)
+- `src/hooks` — `useSheets` (fetch/save no Sheets)
+- `src/lib` — tipos e cliente Sheets
