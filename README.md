@@ -31,3 +31,41 @@ Copie `.env.example` para `.env.local` e preencha:
 - `src/components` — UI (Header, WeekSelector, ExerciseCard, ProgressChart)
 - `src/hooks` — `useSheets` (fetch/save no Sheets)
 - `src/lib` — tipos e cliente Sheets
+
+## Troubleshooting
+
+### Erro: "Failed to execute 'json' on 'Response': Unexpected end of JSON input"
+
+Este erro indica que o Google Apps Script não está retornando JSON válido. Siga este checklist:
+
+#### 1. Verifique se o script está publicado como Web App
+   - Abra o Google Apps Script (Extensions > Apps Script)
+   - Clique em **Deploy** > **Manage deployments**
+   - Verifique se existe um deploy ativo
+   - Se não existir ou estiver desatualizado, clique em **New deployment**
+
+#### 2. Configure as permissões corretamente
+   Ao publicar o Web App, certifique-se de:
+   - **Execute as**: Me (seu email)
+   - **Who has access**: Anyone (qualquer pessoa com o link)
+
+   **IMPORTANTE**: Se você mudar o código do script, precisa criar um **New deployment** para que as mudanças tenham efeito!
+
+#### 3. Verifique a URL no .env.local
+   - A URL deve terminar com `/exec` (não `/dev`)
+   - Exemplo: `https://script.google.com/macros/s/ABC123.../exec`
+   - Copie a URL exata da última implantação em "Manage deployments"
+
+#### 4. Verifique a planilha
+   - A aba deve se chamar exatamente `Dados` (com D maiúsculo)
+   - As colunas devem estar na ordem: `Data | Semana | Exercicio | Valor | Notas`
+
+#### 5. Teste o script diretamente
+   - Abra a URL do script diretamente no navegador
+   - Você deve ver um JSON como: `{"success":true,"data":[...]}`
+   - Se ver HTML ou erro, o problema está na configuração do Google Apps Script
+
+#### 6. Verifique os logs do Next.js
+   - Rode `npm run dev` e abra o console do terminal
+   - Você verá logs detalhados de todas as requisições ao Sheets
+   - Procure por mensagens de erro específicas que indicam o problema
