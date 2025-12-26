@@ -55,7 +55,19 @@ export async function fetchWorkouts(): Promise<WorkoutEntry[]> {
 
   try {
     const res = await fetch(SHEETS_API_URL, { cache: "no-store", signal: controller.signal });
-    const json: SheetsResponse = await res.json();
+
+    // Tenta fazer parse do JSON com melhor tratamento de erro
+    let json: SheetsResponse;
+    try {
+      const text = await res.text();
+      if (!text || text.trim() === "") {
+        throw new Error("Resposta vazia da API. Verifique os logs do servidor.");
+      }
+      json = JSON.parse(text) as SheetsResponse;
+    } catch (parseError) {
+      console.error("Erro ao fazer parse do JSON:", parseError);
+      throw new Error("Resposta inválida da API. Verifique os logs do servidor e o console do navegador.");
+    }
 
     if (!res.ok || json.success === false) {
       throw new Error(json.error || "Não foi possível carregar dados do Sheets.");
@@ -95,7 +107,19 @@ export async function saveWorkout(entry: SaveEntryInput): Promise<WorkoutEntry> 
       signal: controller.signal,
     });
 
-    const json: SheetsResponse = await res.json();
+    // Tenta fazer parse do JSON com melhor tratamento de erro
+    let json: SheetsResponse;
+    try {
+      const text = await res.text();
+      if (!text || text.trim() === "") {
+        throw new Error("Resposta vazia da API no POST. Verifique os logs do servidor.");
+      }
+      json = JSON.parse(text) as SheetsResponse;
+    } catch (parseError) {
+      console.error("Erro ao fazer parse do JSON no POST:", parseError);
+      throw new Error("Resposta inválida da API no POST. Verifique os logs do servidor.");
+    }
+
     if (!res.ok || json.success === false) {
       throw new Error(json.error || "Falha ao salvar no Sheets.");
     }
